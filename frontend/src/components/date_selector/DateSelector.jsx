@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { Select, Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
+import {
+  Select,
+  Listbox,
+  ListboxButton,
+  ListboxOption,
+  ListboxOptions,
+} from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
 
 const months = [
@@ -34,7 +40,7 @@ function getDate() {
 function isLeapYear(year) {
   let isLeap = false;
 
-  if ((year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0)) {
+  if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
     isLeap = true;
   }
 
@@ -62,12 +68,21 @@ function getNumOfDays(month, year) {
 
   if (month === "February" && isLeapYear(year)) {
     days = monthDays["FebruaryLeap"];
-  }
-  else {
+  } else {
     days = monthDays[month];
   }
-  
+
   return Array.from({ length: days }, (_, i) => i + 1);
+}
+
+function getYearOption(currYear) {
+  let yearOptions = [];
+
+  for (let i = 0; i < 5; i++) {
+    yearOptions.push(currYear + i);
+  }
+
+  return yearOptions;
 }
 
 export default function DateSelector() {
@@ -77,43 +92,75 @@ export default function DateSelector() {
   const [day, setDay] = useState(currDay);
   const [year, setYear] = useState(currYear);
 
-  //TODO: Fix Feb
-  const[numOfDays, setNumOfDays] = useState([]);
+  const [numOfDays, setNumOfDays] = useState([]);
+  const yearOptions = getYearOption(currYear);
 
   useEffect(() => {
-    setNumOfDays(getNumOfDays(month, year));
+    const currNumOfDays = getNumOfDays(month, year);
+
+    if (day > currNumOfDays.length) {
+      setDay(currNumOfDays.length);
+    }
+    setNumOfDays(currNumOfDays);
   }, [month]);
 
   return (
-    <div className="flex">
+    <div className="flex flex-wrap">
       <div className="w-1/4 pt-2 mr-2 min-w-32 relative">
         <Listbox value={month} onChange={setMonth}>
-            <ListboxButton className="w-full flex p-1 px-2 border justify-between text-gray-400 bg-[#171717] border-gray-400 rounded">
-              {month}
-              <ChevronDown/>
-            </ListboxButton>
-            <ListboxOptions className="absolute w-full border p-2 bg-[#171717] border-gray-400 rounded">
-              {months.map((month, index) => (
-                <ListboxOption key={index} value={month}>
-                  {month}
-                </ListboxOption>
-              ))}
-            </ListboxOptions>
+          <ListboxButton className="w-full flex p-1 px-2 border justify-between text-gray-400 bg-[#171717] border-gray-400 rounded hover:cursor-pointer hover:border-blue-500">
+            {month}
+            <ChevronDown />
+          </ListboxButton>
+          <ListboxOptions className="absolute w-full max-h-[30vh] border z-1 bg-[#171717] border-gray-400 rounded overflow-y-auto">
+            {months.map((month, index) => (
+              <ListboxOption
+                key={index}
+                value={month}
+                className="p-1 hover:cursor-pointer hover:bg-blue-500"
+              >
+                {month}
+              </ListboxOption>
+            ))}
+          </ListboxOptions>
         </Listbox>
       </div>
-      <div className="w-1/8 min-w-15 pt-2 relative">
+      <div className="w-1/8 min-w-16 mr-2 pt-2 relative">
         <Listbox value={day} onChange={setDay}>
-            <ListboxButton className="w-full flex p-1 px-2 border justify-between text-gray-400 bg-[#171717] border-gray-400 rounded">
-              {day}
-              <ChevronDown/>
-            </ListboxButton>
-            <ListboxOptions className="absolute w-full max-h-33 border p-2 bg-[#171717] border-gray-400 rounded overflow-y-auto">
-              {numOfDays.map((day, index) => (
-                <ListboxOption key={index} value={day}>
-                  {day}
-                </ListboxOption>
-              ))}
-            </ListboxOptions>
+          <ListboxButton className="w-full flex p-1 px-2 border justify-between text-gray-400 bg-[#171717] border-gray-400 rounded hover:cursor-pointer hover:border-blue-500">
+            {day}
+            <ChevronDown />
+          </ListboxButton>
+          <ListboxOptions className="absolute w-full max-h-[30vh] border z-1 bg-[#171717] border-gray-400 rounded overflow-y-auto">
+            {numOfDays.map((day, index) => (
+              <ListboxOption
+                key={index}
+                value={day}
+                className="p-1 hover:cursor-pointer hover:bg-blue-500"
+              >
+                {day}
+              </ListboxOption>
+            ))}
+          </ListboxOptions>
+        </Listbox>
+      </div>
+      <div className="w-1/5 min-w-20 mr-2 pt-2 relative">
+        <Listbox value={year} onChange={setYear}>
+          <ListboxButton className="w-full flex p-1 px-2 border z-1 justify-between text-gray-400 bg-[#171717] border-gray-400 rounded hover:cursor-pointer hover:border-blue-500">
+            {year}
+            <ChevronDown />
+          </ListboxButton>
+          <ListboxOptions className="absolute w-full border z-1 bg-[#171717] border-gray-400 rounded">
+            {yearOptions.map((year, index) => (
+              <ListboxOption
+                key={index}
+                value={year}
+                className="p-1 hover:cursor-pointer hover:bg-blue-500"
+              >
+                {year}
+              </ListboxOption>
+            ))}
+          </ListboxOptions>
         </Listbox>
       </div>
     </div>
