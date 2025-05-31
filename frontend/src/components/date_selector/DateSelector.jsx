@@ -85,7 +85,8 @@ function getYearOption(currYear) {
   return yearOptions;
 }
 
-export default function DateSelector() {
+// Main Component
+export default function DateSelector(prop) {
   const [currMonth, currDay, currYear] = getDate();
 
   const [month, setMonth] = useState(currMonth);
@@ -104,11 +105,21 @@ export default function DateSelector() {
     setNumOfDays(currNumOfDays);
   }, [month]);
 
+
+  // Passes date input to parent
+  useEffect(() => {
+    const monthIndex = months.indexOf(month);
+    const selectedDate = new Date(year, monthIndex, day);
+  
+    const formatted = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+    prop.setDate(formatted);
+  }, [year, month, day])
+
   return (
     <div className="flex flex-wrap">
-      <div className="w-1/4 pt-2 mr-2 min-w-32 relative">
+      <div className="w-1/4 mr-2 min-w-32 relative">
         <Listbox value={month} onChange={setMonth}>
-          <ListboxButton className="w-full flex p-1 px-2 border justify-between text-gray-400 bg-[#171717] border-gray-400 rounded hover:cursor-pointer hover:border-blue-500">
+          <ListboxButton className="w-full flex p-1 px-2 border justify-between text-gray-400 bg-[#171717] border-gray-400 rounded hover:cursor-pointer hover:border-blue-500 select-none">
             {month}
             <ChevronDown />
           </ListboxButton>
@@ -117,7 +128,7 @@ export default function DateSelector() {
               <ListboxOption
                 key={index}
                 value={month}
-                className="p-1 hover:cursor-pointer hover:bg-blue-500"
+                className="p-1 hover:cursor-pointer hover:bg-blue-500 select-none"
               >
                 {month}
               </ListboxOption>
@@ -125,9 +136,9 @@ export default function DateSelector() {
           </ListboxOptions>
         </Listbox>
       </div>
-      <div className="w-1/8 min-w-16 mr-2 pt-2 relative">
+      <div className="w-1/8 min-w-16 mr-2 relative">
         <Listbox value={day} onChange={setDay}>
-          <ListboxButton className="w-full flex p-1 px-2 border justify-between text-gray-400 bg-[#171717] border-gray-400 rounded hover:cursor-pointer hover:border-blue-500">
+          <ListboxButton className="w-full flex p-1 px-2 border justify-between text-gray-400 bg-[#171717] border-gray-400 rounded hover:cursor-pointer hover:border-blue-500 select-none">
             {day}
             <ChevronDown />
           </ListboxButton>
@@ -136,7 +147,7 @@ export default function DateSelector() {
               <ListboxOption
                 key={index}
                 value={day}
-                className="p-1 hover:cursor-pointer hover:bg-blue-500"
+                className="p-1 hover:cursor-pointer hover:bg-blue-500 select-none"
               >
                 {day}
               </ListboxOption>
@@ -144,9 +155,9 @@ export default function DateSelector() {
           </ListboxOptions>
         </Listbox>
       </div>
-      <div className="w-1/5 min-w-20 mr-2 pt-2 relative">
+      <div className="w-1/5 min-w-20 mr-2 relative">
         <Listbox value={year} onChange={setYear}>
-          <ListboxButton className="w-full flex p-1 px-2 border z-1 justify-between text-gray-400 bg-[#171717] border-gray-400 rounded hover:cursor-pointer hover:border-blue-500">
+          <ListboxButton className="w-full flex p-1 px-2 border z-1 justify-between text-gray-400 bg-[#171717] border-gray-400 rounded hover:cursor-pointer hover:border-blue-500 select-none">
             {year}
             <ChevronDown />
           </ListboxButton>
@@ -155,7 +166,7 @@ export default function DateSelector() {
               <ListboxOption
                 key={index}
                 value={year}
-                className="p-1 hover:cursor-pointer hover:bg-blue-500"
+                className="p-1 hover:cursor-pointer hover:bg-blue-500 select-none"
               >
                 {year}
               </ListboxOption>
