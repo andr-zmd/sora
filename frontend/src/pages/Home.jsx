@@ -3,23 +3,39 @@ import {useState, createContext} from 'react';
 import Taskbar from "../components/taskbar/Taskbar";
 import Timer from "../components/timer/Timer";
 import Navbar from "../components/navbar/Navbar";
+import TaskEditor from '../components/task_editor/TaskEditor';
 
-export const TaskbarUpdaterContext = createContext();
-export const LocalTaskbarUpdaterContext = createContext();
+export const TaskEditorContext = createContext();
+export const TaskbarContext = createContext();
 
 export default function Home() {
-  const [updateTaskbar, setUpdateTaskbar] = useState(() => {});
-  const [updateLocalTaskbar, setUpdateLocalTaskbar] = useState({})
 
+  // Task Editor Logic
+  const[isTaskEditorOpen, setIsTaskEditorOpen] = useState(false);
+  const[taskEditorOperation, setTaskEditorOperation] = useState("add");
+
+  // TE and TB Variables
+  const[taskId, setTaskId] = useState(0);
+
+  const openTaskEditor = (operation, taskId) => {
+    setIsTaskEditorOpen(true);
+    setTaskEditorOperation(operation);
+    setTaskId(taskId);
+  }
+  const closeTaskEditor = () => setIsTaskEditorOpen(false);
+
+  // Taskbar Logic
+  const[taskbarOperations, setTaskbarOperations] = useState({});
   return (
     <div className="flex h-screen">
       <div className="w-1/4 min-w-70 h-1/1">
-        <LocalTaskbarUpdaterContext.Provider value={{updateLocalTaskbar, setUpdateLocalTaskbar}}>
-          <TaskbarUpdaterContext.Provider value={{updateTaskbar, setUpdateTaskbar}}>
+        <TaskbarContext.Provider value={{taskbarOperations, setTaskbarOperations}}>
+          <TaskEditorContext.Provider value={{taskEditor: {openTaskEditor, closeTaskEditor}, taskEditorOperation }}>
             <Navbar />
             <Taskbar />
-          </TaskbarUpdaterContext.Provider>
-        </LocalTaskbarUpdaterContext.Provider>
+            {isTaskEditorOpen && <TaskEditor taskId={taskId}/>}
+          </TaskEditorContext.Provider>
+        </TaskbarContext.Provider>  
       </div>
       <Timer />
     </div>

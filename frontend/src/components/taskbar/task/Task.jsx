@@ -1,26 +1,13 @@
-import { CopyMinus, Pencil, X } from "lucide-react";
 import { useContext, useState } from 'react';
+import { Pencil, X } from "lucide-react";
 
-import { TaskbarUpdaterContext } from "../../../pages/Home";
-import { LocalTaskbarUpdaterContext } from "../../../pages/Home";
+import { TaskbarContext, TaskEditorContext} from '../../../pages/Home';
 
-
-import TaskEditor from "../../task_editor/TaskEditor"; 
 // Try Authentication
 
-function deleteTask(id) {
-
-  try {
-    fetch(`/task/delete/${id}`, { method: "DELETE" });
-  } catch (err) {
-    console.log(err);
-  }
-}
-
 export default function Task(prop) {
-  const { updateTaskbar } = useContext(TaskbarUpdaterContext);
-  const { updateLocalTaskbar } = useContext(LocalTaskbarUpdaterContext);
-  const[editingTask, setEditingTask] = useState(false);
+  const { taskbarOperations } = useContext(TaskbarContext);
+  const { taskEditor } = useContext(TaskEditorContext);
 
   return (
     <>
@@ -30,9 +17,7 @@ export default function Task(prop) {
             <X
               size={20}
               onClick={() => {
-                updateLocalTaskbar.deleteTaskLocally(prop.taskId);
-                deleteTask(prop.taskId);
-                updateTaskbar();
+                taskbarOperations.deleteTask(prop.taskId);
               }}
               className="hover:text-red-400 hover:cursor-pointer transition duration-150 active:scale-75"
             />
@@ -40,14 +25,13 @@ export default function Task(prop) {
           <button>
             <Pencil
               size={20}
-              onClick={ () => setEditingTask(!editingTask) }
+              onClick={ () => taskEditor.openTaskEditor("update", prop.taskId) }
               className="hover:text-green-300 hover:cursor-pointer transition duration-150"
             />
           </button>
         </div>
         <p className="size-12 grow truncate">{prop.title}</p>
       </div>
-      {editingTask && <TaskEditor display={setEditingTask} operation="update"></TaskEditor>}
     </>
   );
 }

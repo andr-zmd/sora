@@ -1,34 +1,10 @@
-import { X } from "lucide-react";
 import { useState, useContext } from "react";
+import { X } from "lucide-react";
 
-import { TaskbarUpdaterContext } from "../../pages/Home";
-import { LocalTaskbarUpdaterContext } from "../../pages/Home";
+import { TaskbarContext } from "../../pages/Home";
+import { TaskEditorContext } from "../../pages/Home";
 
 import DateSelector from "../date_selector/DateSelector";
-
-async function addTask(userId, title, date, desc) {
-  try {
-    const res = await fetch("/task/add", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, date, userId, desc }),
-    });
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-async function updateTask(userId, taskId, title, date, desc) {
-  try {
-    const res = await fetch("/task/update", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ TaskId, title, date, userId, desc }),
-    });
-  } catch (err) {
-    console.log(err);
-  }
-}
 
 // Makes sure description is <= 250
 function validateDesc(description, setDescription) {
@@ -38,26 +14,12 @@ function validateDesc(description, setDescription) {
 }
 
 export default function TaskEditor(prop) {
-  const { updateTaskbar } = useContext(TaskbarUpdaterContext);
-  const { updateLocalTaskbar } = useContext(LocalTaskbarUpdaterContext)
+  const { taskbarOperations } = useContext(TaskbarContext);
+  const { taskEditor, taskEditorOperation } = useContext(TaskEditorContext);
 
-  // PLACEHOLDER USER ID
-  const userId = 1;
-
-  const [closing, setClosing] = useState(false);
-
-  const [tempId, setTempId] = useState(Math.random());
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
-
-
-  const animateOut = () => {
-    setClosing(true);
-    setTimeout(() => {
-      prop.display(false);
-    }, 180);
-  };
 
   return (
     <div
@@ -66,13 +28,11 @@ export default function TaskEditor(prop) {
       fixed left-1/2 top-1/2
       bg-[#242424] rounded-xl
       transform -translate-x-1/2 -translate-y-1/2
-      
-      ${closing ? "animate-fade-out-scale" : "animate-fade-in-scale"}
     `}
     >
       <div className="flex flex-col grow space-y-2">
         <div className="flex justify-end text-gray-400">
-          <button onClick={animateOut}>
+          <button onClick={taskEditor.closeTaskEditor}>
             <X className="hover:cursor-pointer" />
           </button>
         </div>
@@ -92,32 +52,28 @@ export default function TaskEditor(prop) {
       </div>
       <div className="flex justify-between items-center text-gray-400 select-none">
         <div>{description.length}/250</div>
-        {prop.operation == "add" && 
+        { taskEditorOperation == "add" && (
           <button
             onClick={() => {
-              addTask(userId, title, date, description);
-              updateLocalTaskbar.addTaskLocally(tempId, title, date, description);
-              updateTaskbar();
-              animateOut();
+              taskbarOperations.addTask(title, date, description);
+              taskEditor.closeTaskEditor();
             }}
             className="flex px-5 py-1 bg-blue-500 text-white rounded-full hover:cursor-pointer hover:bg-blue-600 transition duration-150"
           >
             Add
           </button>
-        }
-        {prop.operation == "update" && 
+        )}
+        { taskEditorOperation == "update" && (
           <button
             onClick={() => {
-              addTask(userId, title, date, description);
-              updateTask();
-              animateOut();
+              taskbarOperations.updateTask(prop.taskId, title, date, description);
+              taskEditor.closeTaskEditor();
             }}
             className="flex px-5 py-1 bg-blue-500 text-white rounded-full hover:cursor-pointer hover:bg-blue-600 transition duration-150"
           >
             Update
           </button>
-        }
-
+        )}
       </div>
     </div>
   );

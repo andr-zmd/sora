@@ -1,12 +1,12 @@
 import { useState, useEffect, useContext } from "react";
 
-import { TaskbarUpdaterContext } from "../../pages/Home";
-import { LocalTaskbarUpdaterContext } from "../../pages/Home";
-
 import Task from "./task/Task";
-import { Zap } from "lucide-react";
 
-async function getTask(userId) {
+// Contexts
+import { TaskbarContext } from "../../pages/Home";
+
+// Fetches all user task in db
+const getTask = async (userId) => {
   const res = await fetch(`/task/get?userId=${userId}`, {
     method: "GET",
   });
@@ -17,29 +17,17 @@ async function getTask(userId) {
 }
 
 export default function Taskbar() {
-  const { setUpdateTaskbar } = useContext(TaskbarUpdaterContext);
-  const { setUpdateLocalTaskbar } = useContext(LocalTaskbarUpdaterContext);
+  const { setTaskbarOperations } = useContext(TaskbarContext);
 
   const [tasks, setTasks] = useState([]);
 
-  // Add task locally before fetch
-  const addTaskLocally = (id, title, date, description) => {
-    setTasks((prev) => [...prev, {id: id, title:title, date:date, desc:description}])
-  }
+  const userId = 1; // Temporary
 
-  // Delete task locally before fetch
-  const deleteTaskLocally = (id) => {
-    setTasks(prev => prev.filter(task => task.id !== id));
-  }
-
-  // Updates the taskbar
-  const updateTaskbar = () => {
-    const userId = 1;
-
+  // Updates the displayed task in the taskbar
+  const updateTaskbarDisplay = () => {
     getTask(userId)
       .then((data) => {
         setTasks(data);
-        console.log(data);
       })
       .catch((error) => {
         setTasks([
@@ -53,15 +41,67 @@ export default function Taskbar() {
       });
   };
 
+  // Add task to taskbar
+  const addTask = (title, date, description) => {
+    let tempId = Math.floor(Math.random() * 1000);
+
+    fetch("/task/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title, date, userId, description }),
+    })
+    .catch(err => {
+      console.error("Failed to add task:", err);
+    });
+
+    setTasks((prev) => [
+      ...prev,
+      { id: tempId, title: title, date: date, description: description },
+    ]);
+    updateTaskbarDisplay();
+  };
+
+  
+
+  // Delete a task in the taskbar
+  const deleteTask = (taskId) => {
+    fetch(`/task/delete/${taskId}`, { method: "DELETE" })
+    .catch(err => {
+      console.error('Delete failed:', err);
+    });
+
+    setTasks((prev) => prev.filter((task) => task.id !== taskId));
+    updateTaskbarDisplay();
+  };
+  
+  // Update a task in the taskbar
+  const updateTask = (taskId, title, date, description) => {
+    fetch("/task/update", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ taskId, title, date, description }),
+    })
+    .catch(err => {
+      console.error('Delete failed:', err);
+    });
+
+    setTasks(prev =>
+      prev.map(task =>
+        task.id === taskId ? { ...task, title, date, description} : task
+      )
+    );
+    updateTaskbarDisplay();
+  };
+
+  // Format Date
   const formatDate = (date) => {
     return new Date(date).toISOString().split("T")[0];
   };
 
   useEffect(() => {
-    setUpdateTaskbar(() => updateTaskbar)
-    setUpdateLocalTaskbar({addTaskLocally, deleteTaskLocally})
-    updateTaskbar();
-  }, [setUpdateTaskbar]);
+    setTaskbarOperations({ addTask, deleteTask, updateTask });
+    updateTaskbarDisplay();
+  }, []);
 
   return (
     <div className="h-1/2 mt-2 space-y-3 overflow-y-auto px-3">

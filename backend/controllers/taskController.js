@@ -17,7 +17,6 @@ export function addTask(req, res) {
 }
 
 export function getTask(req, res) {
-  // Test Response
   const user_id = req.query.userId;
   const sql = 'SELECT * FROM task WHERE user_id = ?';
 
@@ -31,8 +30,19 @@ export function getTask(req, res) {
   })
 }
 
-export function updateTask() {
-  
+export function updateTask(req, res) {
+  const {taskId, title, date, description} = req.body;
+  const values = [title, description, date, taskId];
+  const sql = 'UPDATE task SET title = ?, description = ?, date = ? WHERE id = ?';
+
+  taskDb.query(sql, values, (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to update task' });
+    }
+    else {
+      res.status(200).json({ message: 'Task updated succesfully', id: result.insertId })
+    }
+  })
 }
 
 export function deleteTask(req, res) {
