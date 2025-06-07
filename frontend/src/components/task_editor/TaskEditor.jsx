@@ -23,14 +23,9 @@ export default function TaskEditor(prop) {
 
   return (
     <div
-      className={`
-      flex flex-col w-2/5 min-w-50 h-1/2 min-h-50 p-6 space-y-2
-      fixed left-1/2 top-1/2
-      bg-[#242424] rounded-xl
-      transform -translate-x-1/2 -translate-y-1/2
-    `}
+      className={`fixed top-1/2 left-1/2 flex h-1/2 min-h-50 w-2/5 min-w-50 -translate-x-1/2 -translate-y-1/2 transform flex-col space-y-2 rounded-xl bg-[#171717] border border-blue-500 p-6`}
     >
-      <div className="flex flex-col grow space-y-2">
+      <div className="flex grow flex-col space-y-2">
         <div className="flex justify-end text-gray-400">
           <button onClick={taskEditor.closeTaskEditor}>
             <X className="hover:cursor-pointer" />
@@ -41,35 +36,40 @@ export default function TaskEditor(prop) {
           placeholder="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="h-12 text-2xl border-b border-gray-400 outline-none placeholder:text-2xl hover:border-blue-500 select-none"
+          className="h-12 border-b border-blue-500 text-2xl outline-none select-none placeholder:text-2xl hover:border-white"
         />
         <DateSelector setDate={setDate} className />
         <textarea
           value={description}
           onChange={(e) => validateDesc(e.target.value, setDescription)}
-          className="border p-2 grow bg-[#171717] border-gray-400 rounded flex-"
+          className="flex- grow rounded border border-blue-500 bg-[#171717] p-2"
         ></textarea>
       </div>
-      <div className="flex justify-between items-center text-gray-400 select-none">
+      <div className="flex items-center justify-between text-gray-400 select-none">
         <div>{description.length}/250</div>
-        { taskEditorOperation == "add" && (
+        {taskEditorOperation == "add" && (
           <button
             onClick={() => {
               taskbarOperations.addTask(title, date, description);
               taskEditor.closeTaskEditor();
             }}
-            className="flex px-5 py-1 bg-blue-500 text-white rounded-full hover:cursor-pointer hover:bg-blue-600 transition duration-150"
+            className="flex rounded-full bg-blue-500 px-5 py-1 text-white transition duration-150 hover:cursor-pointer hover:bg-blue-600"
           >
             Add
           </button>
         )}
-        { taskEditorOperation == "update" && (
+        {taskEditorOperation == "update" && (
           <button
             onClick={() => {
-              taskbarOperations.updateTask(prop.taskId, title, date, description);
+              taskbarOperations.updateTask(
+                prop.taskId,
+                title,
+                date,
+                description,
+              );
               taskEditor.closeTaskEditor();
             }}
-            className="flex px-5 py-1 bg-blue-500 text-white rounded-full hover:cursor-pointer hover:bg-blue-600 transition duration-150"
+            className="flex rounded-full bg-blue-500 px-5 py-1 text-white transition duration-150 hover:cursor-pointer hover:bg-blue-600"
           >
             Update
           </button>

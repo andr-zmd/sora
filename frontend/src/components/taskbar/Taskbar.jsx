@@ -7,14 +7,15 @@ import { TaskbarContext } from "../../pages/Home";
 
 // Fetches all user task in db
 const getTask = async (userId) => {
-  const res = await fetch(`/task/get?userId=${userId}`, {
+  const res = await fetch(`/task/getTasks/${userId}`, {
     method: "GET",
   });
   if (!res.ok) {
     throw new Error("ERROR: FAILED TO GET TASK");
   }
+
   return res.json();
-}
+};
 
 export default function Taskbar() {
   const { setTaskbarOperations } = useContext(TaskbarContext);
@@ -49,8 +50,7 @@ export default function Taskbar() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title, date, userId, description }),
-    })
-    .catch(err => {
+    }).catch((err) => {
       console.error("Failed to add task:", err);
     });
 
@@ -61,34 +61,30 @@ export default function Taskbar() {
     updateTaskbarDisplay();
   };
 
-  
-
   // Delete a task in the taskbar
   const deleteTask = (taskId) => {
-    fetch(`/task/delete/${taskId}`, { method: "DELETE" })
-    .catch(err => {
-      console.error('Delete failed:', err);
+    fetch(`/task/delete/${taskId}`, { method: "DELETE" }).catch((err) => {
+      console.error("Delete failed:", err);
     });
 
     setTasks((prev) => prev.filter((task) => task.id !== taskId));
     updateTaskbarDisplay();
   };
-  
+
   // Update a task in the taskbar
   const updateTask = (taskId, title, date, description) => {
     fetch("/task/update", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ taskId, title, date, description }),
-    })
-    .catch(err => {
-      console.error('Delete failed:', err);
+    }).catch((err) => {
+      console.error("Delete failed:", err);
     });
 
-    setTasks(prev =>
-      prev.map(task =>
-        task.id === taskId ? { ...task, title, date, description} : task
-      )
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === taskId ? { ...task, title, date, description } : task,
+      ),
     );
     updateTaskbarDisplay();
   };
@@ -104,7 +100,7 @@ export default function Taskbar() {
   }, []);
 
   return (
-    <div className="h-1/2 mt-2 space-y-3 overflow-y-auto px-3">
+    <div className="no-scrollbar h-1/2 space-y-2 overflow-y-scroll px-2 py-[2px]">
       {tasks.map((task) => (
         <Task
           key={task.id}

@@ -105,30 +105,31 @@ export default function DateSelector(prop) {
     setNumOfDays(currNumOfDays);
   }, [month]);
 
-
   // Passes date input to parent
   useEffect(() => {
     const monthIndex = months.indexOf(month);
     const selectedDate = new Date(year, monthIndex, day);
-  
-    const formatted = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+
+    const formatted = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`;
     prop.setDate(formatted);
-  }, [year, month, day])
+  }, [year, month, day]);
+
+  const selectorStyle="flex w-full justify-between rounded border border-blue-500 bg-[#171717] p-1 px-2 text-gray-400 select-none hover:cursor-pointer hover:border-white";
 
   return (
     <div className="flex flex-wrap">
-      <div className="w-1/4 mr-2 min-w-32 relative">
+      <div className="relative mr-2 w-1/4 min-w-32">
         <Listbox value={month} onChange={setMonth}>
-          <ListboxButton className="w-full flex p-1 px-2 border justify-between text-gray-400 bg-[#171717] border-gray-400 rounded hover:cursor-pointer hover:border-blue-500 select-none">
+          <ListboxButton className={selectorStyle}>
             {month}
             <ChevronDown />
           </ListboxButton>
-          <ListboxOptions className="absolute w-full max-h-[30vh] border z-1 bg-[#171717] border-gray-400 rounded overflow-y-auto">
+          <ListboxOptions className="absolute z-1 max-h-[30vh] w-full overflow-y-auto rounded border border-blue-500 bg-[#171717]">
             {months.map((month, index) => (
               <ListboxOption
                 key={index}
                 value={month}
-                className="p-1 hover:cursor-pointer hover:bg-blue-500 select-none"
+                className="p-1 select-none hover:cursor-pointer hover:bg-blue-500"
               >
                 {month}
               </ListboxOption>
@@ -136,18 +137,18 @@ export default function DateSelector(prop) {
           </ListboxOptions>
         </Listbox>
       </div>
-      <div className="w-1/8 min-w-16 mr-2 relative">
+      <div className="relative mr-2 w-1/8 min-w-16">
         <Listbox value={day} onChange={setDay}>
-          <ListboxButton className="w-full flex p-1 px-2 border justify-between text-gray-400 bg-[#171717] border-gray-400 rounded hover:cursor-pointer hover:border-blue-500 select-none">
+          <ListboxButton className={selectorStyle}>
             {day}
             <ChevronDown />
           </ListboxButton>
-          <ListboxOptions className="absolute w-full max-h-[30vh] border z-1 bg-[#171717] border-gray-400 rounded overflow-y-auto">
+          <ListboxOptions className="absolute z-1 max-h-[30vh] w-full overflow-y-auto rounded border border-blue-500 bg-[#171717]">
             {numOfDays.map((day, index) => (
               <ListboxOption
                 key={index}
                 value={day}
-                className="p-1 hover:cursor-pointer hover:bg-blue-500 select-none"
+                className="p-1 select-none hover:cursor-pointer hover:bg-blue-500"
               >
                 {day}
               </ListboxOption>
@@ -155,18 +156,18 @@ export default function DateSelector(prop) {
           </ListboxOptions>
         </Listbox>
       </div>
-      <div className="w-1/5 min-w-20 mr-2 relative">
+      <div className="relative mr-2 w-1/5 min-w-20">
         <Listbox value={year} onChange={setYear}>
-          <ListboxButton className="w-full flex p-1 px-2 border z-1 justify-between text-gray-400 bg-[#171717] border-gray-400 rounded hover:cursor-pointer hover:border-blue-500 select-none">
+          <ListboxButton className={selectorStyle}>
             {year}
             <ChevronDown />
           </ListboxButton>
-          <ListboxOptions className="absolute w-full border z-1 bg-[#171717] border-gray-400 rounded">
+          <ListboxOptions className="absolute z-1 w-full rounded border border-blue-500 bg-[#171717]">
             {yearOptions.map((year, index) => (
               <ListboxOption
                 key={index}
                 value={year}
-                className="p-1 hover:cursor-pointer hover:bg-blue-500 select-none"
+                className="p-1 select-none hover:cursor-pointer hover:bg-blue-500"
               >
                 {year}
               </ListboxOption>

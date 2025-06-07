@@ -8,10 +8,8 @@ body {
 
   overflow: hidden;
 
-  background-color: #171717;
   color: white;
 }
-
 @theme {
   --animate-fade-in-scale: fade-in-scale 0.2s ease-out;
   @keyframes fade-in-scale {
@@ -34,5 +32,17 @@ body {
       opacity: 0;
       transform: scale(0.95);
     }
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
   }
 }

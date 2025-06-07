@@ -27,7 +27,7 @@ export default function Home() {
   // Taskbar Logic
   const[taskbarOperations, setTaskbarOperations] = useState({});
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-radial-[at_60%_50%] from-[#242424] from-5% to-[#121212] to-70%">
       <div className="w-1/4 min-w-70 h-1/1">
         <TaskbarContext.Provider value={{taskbarOperations, setTaskbarOperations}}>
           <TaskEditorContext.Provider value={{taskEditor: {openTaskEditor, closeTaskEditor}, taskEditorOperation }}>
