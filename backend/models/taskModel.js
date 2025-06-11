@@ -1,11 +1,15 @@
 import soraDb from "./../config/soraDb.js";
 
 export async function queryGetTask(userId) {
-  try {
-    const[rows, fields] = await soraDb.query("SELECT * FROM TASK WHERE user_id = ?", [userId])
-    return rows;
-  } catch (err) {
-    console.log("Error fetching task");
-    return [];
-  }
+  const[rows, fields] = await soraDb.execute("SELECT * FROM TASK WHERE user_id = ?", [userId]);
+  return rows;
 }
+
+export async function queryAddTask(userId, title, description, date) {
+  const[rows, fields] = await soraDb.execute("INSERT INTO task (user_id, title, description, date) VALUES (?, ?, ?, ?)", [userId, title, description, date]);
+} 
+    
+export async function queryDeleteTask(userId, taskId) {
+  const[rows, fields] = await soraDb.execute("DELETE FROM task WHERE user_id = ? AND id = ?", [userId, taskId])
+}
+    

@@ -23,11 +23,18 @@ export default function Timer() {
     setTime(1500);
   };
 
-  const minutes = Math.floor(time / 60);
+  const minutes = String(Math.floor(time / 60)).padStart(2, "0");
   const seconds = String(time % 60).padStart(2, "0");
 
   const controlBar =
     "select-none flex justify-center items-center rounded-full grow border border-blue-500/0 hover:border-blue-500 transition duration-150 hover:cursor-pointer active:scale-75";
+
+  useEffect(() => {
+    document.title = `Sora | ${minutes} : ${seconds}`;
+    if (time === 0) {
+      clearInterval(timer);
+    }
+  }, [time])
 		
   return (
     <div className="flex w-full flex-col items-center justify-around p-3">

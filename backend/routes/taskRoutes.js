@@ -3,12 +3,12 @@ import { getTasks, addTask, updateTask, deleteTask } from '../controllers/taskCo
 
 const taskRoutes = express.Router();
 
-taskRoutes.get("/getTasks/:userId", getTasks);
+taskRoutes.get("/getTasks", getTasks);
 
 taskRoutes.post("/addTask", addTask);
 
 taskRoutes.put("/updateTask", updateTask);
 
-taskRoutes.delete("/deleteTask", deleteTask);
+taskRoutes.delete("/deleteTask/:taskId", deleteTask);
 
 export default taskRoutes;

@@ -11,6 +11,7 @@ const port = 3000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+app.use(express.json());
 app.use("/task", taskRoutes);
 
 app.get("/{*splat}", (req, res) => {

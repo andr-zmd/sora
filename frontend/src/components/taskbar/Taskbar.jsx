@@ -6,15 +6,20 @@ import Task from "./task/Task";
 import { TaskbarContext } from "../../pages/Home";
 
 // Fetches all user task in db
-const getTask = async (userId) => {
-  const res = await fetch(`/task/getTasks/${userId}`, {
-    method: "GET",
-  });
-  if (!res.ok) {
-    throw new Error("ERROR: FAILED TO GET TASK");
-  }
+const getTask = async () => {
+  try {
+    const res = await fetch("/task/getTasks", {
+      method: "GET"
+    });
 
-  return res.json();
+    if (!res.ok) {
+      return [{id: -1, title: "ERROR!", description: "Error fetching task, try again later..."}] 
+    }
+
+    return await res.json();
+  } catch (error) {
+    return [{id: -1, title: "ERROR!", description: "Error connecting to server, try again later..."}]  
+  }
 };
 
 export default function Taskbar() {
@@ -22,57 +27,54 @@ export default function Taskbar() {
 
   const [tasks, setTasks] = useState([]);
 
-  const userId = 1; // Temporary
-
   // Updates the displayed task in the taskbar
   const updateTaskbarDisplay = () => {
-    getTask(userId)
+    getTask()
       .then((data) => {
         setTasks(data);
       })
-      .catch((error) => {
-        setTasks([
-          {
-            id: -1,
-            title: "ERROR: UNABLE TO RETRIEVE TASKS...",
-            date: "",
-            description: "",
-          },
-        ]);
-      });
   };
 
   // Add task to taskbar
   const addTask = (title, date, description) => {
     let tempId = Math.floor(Math.random() * 1000);
 
-    fetch("/task/add", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, date, userId, description }),
-    }).catch((err) => {
-      console.error("Failed to add task:", err);
-    });
+    console.log("task added");
 
     setTasks((prev) => [
       ...prev,
       { id: tempId, title: title, date: date, description: description },
     ]);
-    updateTaskbarDisplay();
+
+    fetch("/task/addTask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title, date, description }),
+    }).catch((err) => {
+      console.error("Failed to add task:", err);
+    }); 
+
   };
 
   // Delete a task in the taskbar
   const deleteTask = (taskId) => {
-    fetch(`/task/delete/${taskId}`, { method: "DELETE" }).catch((err) => {
+    setTasks((prev) => prev.filter((task) => task.id !== taskId));
+
+    fetch(`/task/deleteTask/${taskId}`, { 
+      method: "DELETE",
+    }).catch((err) => {
       console.error("Delete failed:", err);
     });
-
-    setTasks((prev) => prev.filter((task) => task.id !== taskId));
-    updateTaskbarDisplay();
   };
 
   // Update a task in the taskbar
   const updateTask = (taskId, title, date, description) => {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === taskId ? { ...task, title, date, description } : task,
+      )
+    );
+
     fetch("/task/update", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -80,13 +82,6 @@ export default function Taskbar() {
     }).catch((err) => {
       console.error("Delete failed:", err);
     });
-
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === taskId ? { ...task, title, date, description } : task,
-      ),
-    );
-    updateTaskbarDisplay();
   };
 
   // Format Date
@@ -106,7 +101,7 @@ export default function Taskbar() {
           key={task.id}
           taskId={task.id}
           title={task.title}
-          date={formatDate(task.date)}
+          date={task.date ? formatDate(task.date) : undefined}
           desc={task.description}
         />
       ))}
