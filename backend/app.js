@@ -1,23 +1,44 @@
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-// Routes Imports
-import taskRoutes from './routes/taskRoutes.js';
-
-const app = express();
-const port = 3000;
+import express from "express";
+import path from "path";
+import session from "express-session";
+import expressMySqlSession from "express-mysql-session";
+import { fileURLToPath } from "url";
+import taskRoutes from "./routes/taskRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use(express.json());
-app.use("/task", taskRoutes);
+const app = express();
 
-app.get("/{*splat}", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"))
+app.use(express.json());
+
+// Sessions 
+const MySQLStore = expressMySqlSession(session);
+
+const sessionStore = new MySQLStore({
+  host: "localhost",
+  user: process.env.SORA_USER_DB,
+  password: process.env.SORA_PASS_DB,
+  database: "sora_app_db",
 });
 
-app.listen(port, () => {
-  console.log("Listening on port " + port);
+app.use(
+  session({
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false }
+  })
+);
+
+// API Routes
+app.use("/task", taskRoutes);
+
+// Serve Frontend
+app.get("/{*splat}", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+});
+
+app.listen(3000, () => {
+  console.log("Listening on port " + 3000);
 });
