@@ -8,7 +8,7 @@ import { TaskbarContext } from "../../pages/Home";
 // Fetches all user task in db
 const getTask = async () => {
   try {
-    const res = await fetch("/task/getTasks", {
+    const res = await fetch("/api/task/getTasks", {
       method: "GET"
     });
 
@@ -29,9 +29,11 @@ export default function Taskbar() {
 
   // Updates the displayed task in the taskbar
   const updateTaskbarDisplay = () => {
+    console.log("updating");
     getTask()
       .then((data) => {
         setTasks(data);
+        console.log(updated);
       })
   };
 
@@ -39,14 +41,12 @@ export default function Taskbar() {
   const addTask = (title, date, description) => {
     let tempId = Math.floor(Math.random() * 1000);
 
-    console.log("task added");
-
     setTasks((prev) => [
       ...prev,
       { id: tempId, title: title, date: date, description: description },
     ]);
 
-    fetch("/task/addTask", {
+    fetch("/api/task/addTask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title, date, description }),
@@ -60,7 +60,7 @@ export default function Taskbar() {
   const deleteTask = (taskId) => {
     setTasks((prev) => prev.filter((task) => task.id !== taskId));
 
-    fetch(`/task/deleteTask/${taskId}`, { 
+    fetch(`/api/task/deleteTask/${taskId}`, { 
       method: "DELETE",
     }).catch((err) => {
       console.error("Delete failed:", err);
@@ -75,12 +75,12 @@ export default function Taskbar() {
       )
     );
 
-    fetch("/task/update", {
+    fetch("/api/task/updateTask", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ taskId, title, date, description }),
     }).catch((err) => {
-      console.error("Delete failed:", err);
+      console.error("Update Failed", err);
     });
   };
 
@@ -90,7 +90,7 @@ export default function Taskbar() {
   };
 
   useEffect(() => {
-    setTaskbarOperations({ addTask, deleteTask, updateTask });
+    setTaskbarOperations({ addTask, deleteTask, updateTask, updateTaskbarDisplay });
     updateTaskbarDisplay();
   }, []);
 

@@ -1,27 +1,38 @@
-import { queryGetTask, queryAddTask, queryDeleteTask } from "../models/taskModel.js";
-
-const tempId = 1;
+import { queryGetTask, queryAddTask, queryDeleteTask, queryUpdateTask } from "../models/taskModel.js";
 
 export async function getTasks(req, res) {
   try {
-    const tasks = await queryGetTask(tempId);
-    console.log(tasks);
+    const tasks = await queryGetTask(req.session.userId);
     res.json(tasks);
   } catch {
-    res.status(500).json({ error: "Error Fetching Task" });
+    res.status(500).json({ error: "Error fetching task" });
   }
 }
 
-export function addTask(req, res) {
+export async function addTask(req, res) {
   const { title, description, date} = req.body;
-  queryAddTask(tempId, title, description, date); 
+  console.log(req.session.userId);
+  try {
+    await queryAddTask(req.session.userId, title, description, date); 
+  } catch (err) {
+    res.status(500).json({ error: "Error adding task" });
+  }
 }
 
-export function updateTask(req, res) {
-
+export async function updateTask(req, res) {
+  const { taskId, title, date, description } = req.body;
+  try {
+    await queryUpdateTask(req.session.userId, taskId, title, description, date);
+  } catch (err) {
+    res.status(500).json({ error: "Error updating task" });
+  }
 }
 
-export function deleteTask(req, res) {
+export async function deleteTask(req, res) {
   const {taskId} = req.params;
-  queryDeleteTask(tempId, taskId);
+  try {
+    await queryDeleteTask(req.session.userId, taskId);
+  } catch (err) {
+    res.status(500).json({ error: "Error deleting task" });
+  }
 }

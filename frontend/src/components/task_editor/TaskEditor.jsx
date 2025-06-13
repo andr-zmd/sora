@@ -36,7 +36,7 @@ export default function TaskEditor(prop) {
           placeholder="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="h-12 border-b border-blue-500 text-2xl outline-none select-none placeholder:text-2xl hover:border-white"
+          className={`h-12 border-b text-2xl outline-none select-none placeholder:text-2xl hover:border-white ${title ? "border-blue-500" : "border-red-400"}`}
         />
         <DateSelector setDate={setDate} className />
         <textarea
@@ -50,8 +50,10 @@ export default function TaskEditor(prop) {
         {taskEditorOperation == "add" && (
           <button
             onClick={() => {
-              taskbarOperations.addTask(title, date, description);
-              taskEditor.closeTaskEditor();
+              if (title) {
+                taskbarOperations.addTask(title, date, description);
+                taskEditor.closeTaskEditor();
+              }
             }}
             className="flex rounded-full bg-blue-500 px-5 py-1 text-white transition duration-150 hover:cursor-pointer hover:bg-blue-600"
           >
@@ -61,13 +63,15 @@ export default function TaskEditor(prop) {
         {taskEditorOperation == "update" && (
           <button
             onClick={() => {
-              taskbarOperations.updateTask(
-                prop.taskId,
-                title,
-                date,
-                description,
-              );
-              taskEditor.closeTaskEditor();
+              if (title) {
+                taskbarOperations.updateTask(
+                  prop.taskId,
+                  title,
+                  date,
+                  description,
+                );
+                taskEditor.closeTaskEditor();
+              }
             }}
             className="flex rounded-full bg-blue-500 px-5 py-1 text-white transition duration-150 hover:cursor-pointer hover:bg-blue-600"
           >

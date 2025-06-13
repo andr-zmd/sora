@@ -43,7 +43,7 @@ export default function Timer() {
           {minutes} : {seconds}
         </div>
       </div>
-      <div className="flex h-10 w-1/4 justify-around rounded-full border border-blue-500">
+      <div className="flex h-10 w-1/4 justify-around rounded-full border border-blue-500 min-w-50">
         <button className={controlBar} onClick={resetTimer}>
           <RotateCcw />
         </button>
