@@ -29,11 +29,9 @@ export default function Taskbar() {
 
   // Updates the displayed task in the taskbar
   const updateTaskbarDisplay = () => {
-    console.log("updating");
     getTask()
       .then((data) => {
         setTasks(data);
-        console.log(updated);
       })
   };
 
@@ -95,7 +93,7 @@ export default function Taskbar() {
   }, []);
 
   return (
-    <div className="no-scrollbar h-1/2 space-y-2 overflow-y-scroll px-2 py-[2px]">
+    <div className="no-scrollbar h-full space-y-2 overflow-y-scroll px-2 py-[2px]">
       {tasks.map((task) => (
         <Task
           key={task.id}

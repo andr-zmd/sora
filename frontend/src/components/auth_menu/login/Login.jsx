@@ -8,7 +8,7 @@ export default function Login(prop) {
 
   const inputClass = "grow bg-[#171717] border border-blue-500 rounded-md px-1";
   const buttonClass =
-    "flex rounded-full px-5 py-1 text-white font-light transition duration-150 hover:cursor-pointer hover:bg-blue-600";
+    "flex hover:border-blue-600 rounded-full px-5 py-1 text-white font-light transition duration-150 hover:cursor-pointer hover:bg-blue-600";
   return (
     <>
       <h3>Email: </h3>

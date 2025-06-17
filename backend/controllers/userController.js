@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 
 import soraDb from "../config/soraDb.js";
-import { queryUserByEmail, queryAddUser } from "../models/userModel.js";
+import { queryUserById, queryUserByEmail, queryAddUser } from "../models/userModel.js";
 
 const saltRound = 10;
 
@@ -45,4 +45,15 @@ export async function login(req, res) {
 
   req.session.userId = id;
   return res.status(200).send("Login Success");
+}
+
+export async function getStatus(req, res) {
+  if (req.session.userId) {
+    const data = await queryUserById(req.session.userId); 
+
+    const username = data[0].username
+    return res.json({isLoggedIn: true, username: username});
+  } else {
+
+  }
 }

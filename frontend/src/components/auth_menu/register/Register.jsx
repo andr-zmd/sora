@@ -9,7 +9,7 @@ export default function Register(prop) {
 
   const inputClass = "grow bg-[#171717] border border-blue-500 rounded-md px-1";
   const buttonClass =
-    "flex rounded-full font-light px-5 py-1 text-white transition duration-150 hover:cursor-pointer hover:bg-blue-600";
+    "flex rounded-full hover:border-blue-600 font-light px-5 py-1 text-white transition duration-150 hover:cursor-pointer hover:bg-blue-600";
   return (
     <>
       <h3>Username: </h3>

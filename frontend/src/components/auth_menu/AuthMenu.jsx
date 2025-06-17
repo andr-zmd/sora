@@ -8,14 +8,15 @@ export default function AuthMenu() {
   const { taskbarOperations } = useContext(TaskbarContext);
 
   const [operation, setOperation] = useState(0);
-  const tabsClass = `hover:bg-blue-600 transition duration-150 text-sm font-light items-center flex justify-around w-1/2 border-blue-500 hover:bg-blue-500 hover:cursor-pointer border py-2 rounded-xl`;
+  const tabsClass = `hover:bg-blue-600 hover:border-blue-600 transition duration-150 text-sm font-light items-center flex justify-around w-1/2 border-blue-500 hover:bg-blue-500 hover:cursor-pointer border py-2 rounded-xl`;
 
   async function login(email, password) {
-    await fetch("/api/user/login", {
+    const res = await fetch("/api/user/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({email: email, password: password}),
+      body: JSON.stringify({ email: email, password: password }),
     });
+
     taskbarOperations.updateTaskbarDisplay();
   }
 
@@ -48,7 +49,7 @@ export default function AuthMenu() {
         </button>
       </div>
       <div className="flex flex-col gap-2 pt-2">
-        {operation ? <Register register={register} /> : <Login login={login}/>}
+        {operation ? <Register register={register} /> : <Login login={login} />}
       </div>
     </div>
   );
